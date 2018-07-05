@@ -11,8 +11,12 @@
     <script src="js/templates/templates.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        Coveo.SearchEndpoint.configureSampleEndpointV2();
-        Coveo.init(document.body);
+        var root = document.body;
+        Coveo.SearchEndpoint.endpoints['default'] = new Coveo.SearchEndpoint({
+          restUri: 'https://platform.cloud.coveo.com/rest/search',
+          accessToken: 'xx1aec2afe-a451-433d-aefc-19584667f4d8'
+        });
+        Coveo.init(root);
       })
     </script>
   </head>
