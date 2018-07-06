@@ -53,5 +53,8 @@
     "webpack-fail-plugin": "^1.0.6",
     "webpack-serve": "^0.3.1",
     "ws": "^5.1.1"
+  },
+  "dependencies": {
+    "@types/googlemaps": "^3.30.11"
   }
 }

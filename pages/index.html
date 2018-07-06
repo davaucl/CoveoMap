@@ -9,6 +9,7 @@
     <script src="js/CoveoJsSearch.Lazy.js"></script>
     <script src="js/coveo.extension.js"></script>
     <script src="js/templates/templates.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdn4phTy3fE-Pj-BrND-0vKijyx2Dugho"async defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var root = document.body;
@@ -21,7 +22,7 @@
     </script>
   </head>
   <body id="search" class='CoveoSearchInterface' data-enable-history="true">
-    <div class="CoveoHelloWorld"></div>
+    <div class="CoveoMap" id="map"></div>
     <div class="coveo-tab-section">
       <a class="CoveoTab" data-id="All" data-caption="All Content"></a>
     </div>
