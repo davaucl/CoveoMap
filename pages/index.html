@@ -9,55 +9,44 @@
     <script class="coveo-script" src="js/CoveoJsSearch.Lazy.js"></script>
     <script class="coveo-script" src="js/coveo.extension.js"></script>
     <script src="js/templates/templates.js"></script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdn4phTy3fE-Pj-BrND-0vKijyx2Dugho"async defer></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         var root = document.body;
         Coveo.SearchEndpoint.endpoints['default'] = new Coveo.SearchEndpoint({
           restUri: 'https://platform.cloud.coveo.com/rest/search',
-          accessToken: 'xx1aec2afe-a451-433d-aefc-19584667f4d8'
+          accessToken: 'xx1aec2afe-a451-433d-aefc-19584667f4d8',
         });
         Coveo.init(root);
       })
     </script>
   </head>
   <body id="search" class='CoveoSearchInterface' data-enable-history="true">
+    <div class="CoveoMapWraper">
+        <div class="CoveoMap" id="CoveoMap"></div>
+    </div>
     <div class='coveo-search-section'>
-      <div class="CoveoSettings"></div>
-      <div class="CoveoSearchbox" data-enable-omnibox="true"></div>
+      <div class="CoveoSearchbox" data-enable-omnibox="true">
+        <span class="CoveoFieldSuggestions" data-field='@city'></span>
+      </div>
     </div>
     <div class="coveo-main-section">
       <div class="coveo-facet-column">
-        <div class="CoveoFacet" data-title="Type" data-field="@objecttype" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="FileType" data-field="@filetype" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="Author" data-field="@author" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="Year" data-field="@year" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="Month" data-field="@month" data-tab="All"></div>
+        <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
+        <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
       </div>
       <div class="coveo-results-column">
-        <div class="CoveoShareQuery"></div>
-        <div class="CoveoExportToExcel"></div>
-        <div class="CoveoPreferencesPanel">
-          <div class="CoveoResultsPreferences"></div>
-          <div class="CoveoResultsFiltersPreferences"></div>
-        </div>
         <div class="CoveoBreadcrumb"></div>
         <div class="coveo-results-header">
           <div class="coveo-summary-section">
             <span class="CoveoQuerySummary"></span>
             <span class="CoveoQueryDuration"></span>
           </div>
-          <div class="coveo-result-layout-section">
-            <span class="CoveoResultLayout"></span>
-          </div>
           <div class="coveo-sort-section">
             <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
             <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
           </div>
-        </div>
-
-        <div class="CoveoMapWraper">
-            <div class="CoveoCoveoMap" id="CoveoMap"></div>
         </div>
         <div class="CoveoHiddenQuery"></div>
         <div class="CoveoDidYouMean"></div>
