@@ -6,8 +6,8 @@
     <title>Title</title>
     <link rel="stylesheet" href="./css/CoveoFullSearch.css"/>
     <link rel="stylesheet" href="./css/coveoextension.css"/>
-    <script src="js/CoveoJsSearch.Lazy.js"></script>
-    <script src="js/coveo.extension.js"></script>
+    <script class="coveo-script" src="js/CoveoJsSearch.Lazy.js"></script>
+    <script class="coveo-script" src="js/coveo.extension.js"></script>
     <script src="js/templates/templates.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdn4phTy3fE-Pj-BrND-0vKijyx2Dugho"async defer></script>
     <script>
@@ -22,10 +22,6 @@
     </script>
   </head>
   <body id="search" class='CoveoSearchInterface' data-enable-history="true">
-    <div class="CoveoMap" id="map"></div>
-    <div class="coveo-tab-section">
-      <a class="CoveoTab" data-id="All" data-caption="All Content"></a>
-    </div>
     <div class='coveo-search-section'>
       <div class="CoveoSettings"></div>
       <div class="CoveoSearchbox" data-enable-omnibox="true"></div>
@@ -59,14 +55,13 @@
             <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
           </div>
         </div>
+
+        <div class="CoveoMapWraper">
+            <div class="CoveoCoveoMap" id="CoveoMap"></div>
+        </div>
         <div class="CoveoHiddenQuery"></div>
         <div class="CoveoDidYouMean"></div>
         <div class="CoveoErrorReport"></div>
-        <div class="CoveoResultList" data-layout="list" data-wait-animation="fade" data-auto-select-fields-to-include="true"></div>
-        <div class="CoveoResultList" data-layout="card" data-wait-animation="fade" data-auto-select-fields-to-include="true"></div>
-        <div class="CoveoPager"></div>
-        <div class="CoveoLogo"></div>
-        <div class="CoveoResultsPerPage"></div>
       </div>
     </div>
   </body>

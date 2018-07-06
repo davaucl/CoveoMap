@@ -16,17 +16,18 @@ interface IMapDefinition {
 export class CoveoMap extends Component {
     static ID = 'CoveoMap';
 
-    private tabsDefinition: IStringMap<IMapDefinition> = {};
     constructor(public element: HTMLElement, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
-
-        this.initMap();
+        console.log("eille");
+        this.bind.onRootElement(QueryEvents.buildingQuery, (args: IBuildingQueryEventArgs) => this.initMap());
     }
 
     public initMap() {
-        const map = new google.maps.Map(document.getElementById('map'), {
+        const map = new google.maps.Map(document.getElementById('CoveoMap'), {
             center: {lat: -34.397, lng: 150.644},
             zoom: 8
           });
     }
 }
+
+Initialization.registerAutoCreateComponent(CoveoMap);
