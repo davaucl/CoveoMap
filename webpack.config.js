@@ -13,7 +13,7 @@ module.exports = [{
   mode: minimize ? 'production' : 'development',
   devtool: 'source-map',
   entry: {
-    'coveo.extension': path.resolve(__dirname,'./src/Index')
+    'coveo.googleMap.extension': path.resolve(__dirname,'./src/Index')
   },
   output: {
     path: require('path').resolve('./bin/js'),

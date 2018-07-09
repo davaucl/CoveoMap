@@ -48,30 +48,6 @@ export class CoveoMap extends Component {
             center: { lat: -33.839, lng: 151.211 },
             zoom: 12
         });
-        const contentString = '<div id="content">' +
-            '<div id="siteNotice">' +
-            '</div>' +
-            '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-            '<div id="bodyContent">' +
-            '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-            'sandstone rock formation in the southern part of the ' +
-            'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
-            'south west of the nearest large town, Alice Springs; 450&#160;km ' +
-            '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
-            'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
-            'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
-            'Aboriginal people of the area. It has many springs, waterholes, ' +
-            'rock caves and ancient paintings. Uluru is listed as a World ' +
-            'Heritage Site.</p>' +
-            '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-            'https://en.wikipedia.org/w/index.php?title=Uluru</a> ' +
-            '(last visited June 22, 2009).</p>' +
-            '</div>' +
-            '</div>';
-
-        this.infoWindow = new google.maps.InfoWindow({
-            content: contentString
-        });
     }
 
     private plotItem(args: IQuerySuccessEventArgs) {
@@ -85,20 +61,31 @@ export class CoveoMap extends Component {
         }
     }
 
-    private getMarker(result) {
+    private populateInfoWindow(result: IQueryResult) {
+        this.infoWindow = new google.maps.InfoWindow({
+            content : result.raw.businessname
+        });
+    }
+
+    private getMarker(result: IQueryResult) {
         const key = result.raw.sysrowid;
         if (!this.markers[key]) {
-            const resultPosition = { lat: result.raw.latitude, lng: result.raw.longitude };
-            const marker = new google.maps.Marker({
-                position: resultPosition
-            });
-            marker.addListener('click', () => {
-                this.infoWindow.open(this.googleMap, marker);
-            });
-            marker.setMap(this.googleMap);
-            this.markers[key] = marker;
+            this.markers[key] = this.createMarker(result);
         }
         return this.markers[key];
+    }
+
+    private createMarker(result: IQueryResult) {
+        const resultPosition = { lat: result.raw.latitude, lng: result.raw.longitude };
+        const marker = new google.maps.Marker({
+            position: resultPosition
+        });
+        marker.addListener('click', () => {
+            this.populateInfoWindow(result);
+            this.infoWindow.open(this.googleMap, marker);
+        });
+        marker.setMap(this.googleMap);
+        return marker;
     }
 
     private clearRelevantMarker() {
