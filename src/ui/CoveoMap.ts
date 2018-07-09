@@ -63,7 +63,7 @@ export class CoveoMap extends Component {
 
     private populateInfoWindow(result: IQueryResult) {
         this.infoWindow = new google.maps.InfoWindow({
-            content : result.raw.businessname
+            content : '<h2>' + result.raw.businessname + '</h2>' + '<div>' + result.raw.streetname + '<br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone + '</div>'
         });
     }
 
