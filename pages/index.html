@@ -1,57 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" >
-    <meta name="viewport" content="width=device-width, height=device-height" >
-    <title>Title</title>
-    <link rel="stylesheet" href="./css/CoveoFullSearch.css"/>
-    <link rel="stylesheet" href="./css/coveoextension.css"/>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height">
+    <title>Coveo Map</title>
+    <link rel="stylesheet" href="./css/CoveoFullSearch.css" />
+    <link rel="stylesheet" href="./css/coveoextension.css" />
     <script class="coveo-script" src="js/CoveoJsSearch.Lazy.js"></script>
     <script src="js/coveo.googleMap.extension.js"></script>
     <script src="js/templates/templates.js"></script>
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdn4phTy3fE-Pj-BrND-0vKijyx2Dugho"async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAdn4phTy3fE-Pj-BrND-0vKijyx2Dugho" async defer></script>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var root = document.body;
-        Coveo.SearchEndpoint.endpoints['default'] = new Coveo.SearchEndpoint({
-          restUri: 'https://platform.cloud.coveo.com/rest/search',
-          accessToken: 'xx1aec2afe-a451-433d-aefc-19584667f4d8',
-        });
-        Coveo.init(root);
-      })
+        document.addEventListener('DOMContentLoaded', function () {
+            var root = document.body;
+            Coveo.SearchEndpoint.endpoints['default'] = new Coveo.SearchEndpoint({
+                restUri: 'https://platform.cloud.coveo.com/rest/search',
+                accessToken: 'xx1aec2afe-a451-433d-aefc-19584667f4d8',
+            });
+            Coveo.init(root);
+        })
     </script>
-  </head>
-  <body id="search" class='CoveoSearchInterface' data-enable-history="true">
+</head>
+
+<body id="search" class='CoveoSearchInterface' data-enable-history="true">
     <div class="CoveoMapWraper">
         <div class="CoveoMap" id="CoveoMap"></div>
     </div>
     <div class='coveo-search-section'>
-      <div class="CoveoSearchbox" data-enable-omnibox="true">
-        <span class="CoveoFieldSuggestions" data-field='@city'></span>
-      </div>
+        <div class="CoveoSearchbox" data-enable-omnibox="true">
+            <span class="CoveoFieldSuggestions" data-field='@city'></span>
+        </div>
     </div>
     <div class="coveo-main-section">
-      <div class="coveo-facet-column">
-        <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
-      </div>
-      <div class="coveo-results-column">
-        <div class="CoveoBreadcrumb"></div>
-        <div class="coveo-results-header">
-          <div class="coveo-summary-section">
-            <span class="CoveoQuerySummary"></span>
-            <span class="CoveoQueryDuration"></span>
-          </div>
-          <div class="coveo-sort-section">
-            <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
-            <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
-          </div>
+        <div class="coveo-facet-column">
+            <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
+            <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
         </div>
-        <div class="CoveoHiddenQuery"></div>
-        <div class="CoveoDidYouMean"></div>
-        <div class="CoveoErrorReport"></div>
-      </div>
+        <div class="coveo-results-column">
+            <div class="CoveoBreadcrumb"></div>
+            <div class="coveo-results-header">
+                <div class="coveo-summary-section">
+                    <span class="CoveoQuerySummary"></span>
+                    <span class="CoveoQueryDuration"></span>
+                </div>
+                <div class="coveo-sort-section">
+                    <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
+                    <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
+                </div>
+            </div>
+            <div class="CoveoResultList">
+                <script id='MyTemplate' type='text/underscore' class='result-template'>
+          <h1><%- raw.businessname %> </h1>
+          <div class="my-date"><%- raw.city %></div>
+          <div class='my-excerpt'><%- raw.state %></div>
+          <div class='my-excerpt'><%- raw.phone %></div>
+          </script>
+            </div>
+        </div>
     </div>
-  </body>
+    <div class="CoveoHiddenQuery"></div>
+    <div class="CoveoDidYouMean"></div>
+    <div class="CoveoErrorReport"></div>
+    </div>
+    </div>
+</body>
+
 </html>
