@@ -40,7 +40,7 @@ export class CoveoMap extends Component {
     }
 
     private initCluster(args: IQuerySuccessEventArgs) {
-        this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+        this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 50 });
     }
 
     private initMap() {
@@ -90,7 +90,7 @@ export class CoveoMap extends Component {
 
     private clearRelevantMarker() {
         Object.keys(this.markers).forEach((key) => {
-            this.markers[key].setOpacity(0.3);
+            this.markers[key].setOpacity(0.1);
         });
     }
 
