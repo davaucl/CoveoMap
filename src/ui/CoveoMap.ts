@@ -23,7 +23,7 @@ export class CoveoMap extends Component {
     constructor(public element: HTMLElement, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
         this.markers = {};
-        this.bind.onRootElement(QueryEvents.buildingQuery, (args: IQueryBuilderExpression) => this.onBuildingQuery(args));
+        this.bind.onRootElement(QueryEvents.buildingQuery, (args: IBuildingQueryEventArgs) => this.onBuildingQuery(args));
         this.bind.onRootElement(QueryEvents.querySuccess, (args: IQuerySuccessEventArgs) => this.onQuerySuccess(args));
         this.bind.onRootElement(InitializationEvents.afterInitialization, () => this.initMap());
     }
