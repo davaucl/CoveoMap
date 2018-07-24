@@ -1,19 +1,40 @@
 .CoveoMap {
-    position: static;
-    overflow: inherit;
-    height: 100%; }
-  
-  .CoveoMapWraper {
-    width: 100%;
-    height: 600px; }
-  
-  .CoveoLogoOverlay {
-    position: absolute;
-    z-index: 100; 
-    width: 100px;
-    top: 10;
-    left: 10;}
-  
-  .gmnoprint{
-    display:none;
-  }
+  position: static;
+  overflow: inherit;
+  height: 100%; }
+
+.CoveoMapWraper {
+  width: 100%;
+  height: 600px; }
+
+.CoveoLogoOverlay {
+  position: absolute;
+  z-index: 100;
+  width: 100px;
+  top: 10px;
+  left: 10px; }
+
+.gmnoprint {
+  display: none; }
+
+.coveo-search-section{
+  position: absolute;
+  top: -40px;
+  right:30%;
+  width:100%;
+}
+
+.CoveoSearchButton{
+  background-color: white
+}
+
+.CoveoOmnibox,
+.magic-box-suggestions.magic-box-hasSuggestion{
+  box-shadow: 3px 3px 10px rgba(0,0,0, 0.2);
+}
+
+.CoveoMapResultTemplate h1,
+.CoveoMapResultTemplate h2,
+.CoveoMapResultTemplate h3 {
+  line-height: 10px;
+}
