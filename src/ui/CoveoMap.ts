@@ -53,7 +53,7 @@ export class CoveoMap extends Component {
         for (const result of args.results) {
             const marker = this.getMarker(result);
             marker.setOpacity(1);
-            this.focusOnMarker(args.results[0].raw.mapuniqid);
+            this.focusOnMarker(args.results[0].raw.markerid);
             this.markersToCluster.push(marker);
         }
     }
@@ -81,7 +81,7 @@ export class CoveoMap extends Component {
             this.populateInfoWindow(result);
             this.infoWindow.open(this.googleMap, marker);
         });
-        marker.set('mapuniqid', result.raw.mapuniqid);
+        marker.set('markerid', result.raw.markerid);
         marker.setMap(this.googleMap);
         return marker;
     }
@@ -101,7 +101,7 @@ export class CoveoMap extends Component {
             this.infoWindow.close();
         }
         Object.keys(this.markers).forEach((key) => {
-            if (this.markers[key]['mapuniqid'] == uniqueId) {
+            if (this.markers[key]['markerid'] == uniqueId) {
                 this.setZoomLevel(19);
                 this.centerMapOnPoint(this.markers[key].getPosition()['lat'](), this.markers[key].getPosition()['lng']());
                 google.maps.event.trigger(this.markers[key], 'click');
