@@ -46,6 +46,10 @@ export class CoveoMap extends Component {
             center: { lat: -33.839, lng: 151.211 },
             zoom: 12
         });
+        this.getPersistentMarkers();
+    }
+
+    private getPersistentMarkers() {
         Coveo.SearchEndpoint.endpoints.default.search({ q: '', numberOfResults: 1000, pipeline: 'persistent' }).then((results) => this.plotItem(results));
     }
 
@@ -53,7 +57,7 @@ export class CoveoMap extends Component {
         for (const result of args.results) {
             const marker = this.getMarker(result);
             marker.setOpacity(1);
-            this.focusOnMarker(args.results[0].raw.markerid);
+            this.focusOnMarker(args.results[0].raw.markerId);
             this.markersToCluster.push(marker);
         }
     }
@@ -81,7 +85,7 @@ export class CoveoMap extends Component {
             this.populateInfoWindow(result);
             this.infoWindow.open(this.googleMap, marker);
         });
-        marker.set('markerid', result.raw.markerid);
+        marker.set('mapuniqid', result.raw.mapuniqid);
         marker.setMap(this.googleMap);
         return marker;
     }
@@ -101,7 +105,7 @@ export class CoveoMap extends Component {
             this.infoWindow.close();
         }
         Object.keys(this.markers).forEach((key) => {
-            if (this.markers[key]['markerid'] == uniqueId) {
+            if (this.markers[key]['mapuniqid'] == uniqueId) {
                 this.setZoomLevel(19);
                 this.centerMapOnPoint(this.markers[key].getPosition()['lat'](), this.markers[key].getPosition()['lng']());
                 google.maps.event.trigger(this.markers[key], 'click');
