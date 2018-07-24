@@ -34,7 +34,7 @@ export class CoveoMap extends Component {
         this.initCluster(args);
     }
 
-    private onBuildingQuery(args: IQueryBuilderExpression) {
+    private onBuildingQuery(args: IBuildingQueryEventArgs) {
         console.log('Building Query');
     }
 
