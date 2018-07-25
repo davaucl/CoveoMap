@@ -57,7 +57,6 @@ export class CoveoMap extends Component {
         for (const result of args.results) {
             const marker = this.getMarker(result);
             marker.setOpacity(1);
-            this.focusOnMarker(args.results[0].raw.markerId);
             this.markersToCluster.push(marker);
         }
     }
@@ -101,9 +100,6 @@ export class CoveoMap extends Component {
     }
 
     public focusOnMarker(uniqueId) {
-        if (this.infoWindow) {
-            this.infoWindow.close();
-        }
         Object.keys(this.markers).forEach((key) => {
             if (this.markers[key]['mapuniqid'] == uniqueId) {
                 this.setZoomLevel(19);
