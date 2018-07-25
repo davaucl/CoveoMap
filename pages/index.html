@@ -38,8 +38,8 @@
 </div>
 <div class="coveo-main-section">
     <div class="coveo-facet-column">
-        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="10" data-range-slider="true"></div>
-        <div class="CoveoFacetSlider" data-title="Ratings" data-field="@ratings" data-graph-steps="4" data-range-slider="true"></div>
+        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="11" data-range-slider="true"></div>
+        <div class="CoveoFacetRange" data-title="Ratings" data-field="@ratings"></div>
         <div class="CoveoFacet" data-title="Departement" data-field="@department" data-tab="All"></div>
         <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
         <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
@@ -52,12 +52,18 @@
                 <span class="CoveoQueryDuration"></span>
             </div>
             <div class="coveo-sort-section">
+                <span class="CoveoSort" data-sort-criteria="@distance ascending" data-caption="Distance"></span>
                 <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
-                <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
             </div>
         </div>
         <div class="CoveoResultList" data-layout="card">
-            <script id="CoveoMapResultTemplate" class="result-template" type="text/html" data-layout="card">
+            <script id="CoveoMapResultTemplate" class="result-template" type="text/underscore" data-layout="card">
+                {{
+                    formatedDistance = "-";
+                    if (raw.distance) {
+                        formatedDistance = raw.distance.toFixed(2);
+                    }
+                }}
                 <div class="coveo-result-frame CoveoMapResultTemplate" onClick="CoveoMap.CoveoMap.focusOnMarker('<%- raw.markerid %>')">
                     <div class="coveo-result-row">
                         <div class="coveo-result-cell" style="padding-left:15px;">
@@ -76,7 +82,9 @@
                                 <span class="CoveoFieldValue" data-field="@state"></span>
                             </div>
                             <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:14px">
-                                <span class="CoveoText" data-value="Rated "></span>
+                                    <span>{{- formatedDistance }}</span>
+                                    <span class="CoveoText" data-value="km"></span></br>
+                                    <span class="CoveoText" data-value="Rated "></span>
                                 <span class="CoveoFieldValue" data-field="@ratings"></span>
                             </div>                            
                         </div>
@@ -98,14 +106,14 @@
                 </div>
             </script>
         </div>
-                    <div class="CoveoPager"></div>
-                </div>
-            </div>
-            <div class="CoveoHiddenQuery"></div>
-            <div class="CoveoDidYouMean"></div>
-            <div class="CoveoErrorReport"></div>
-        </div>
+        <div class="CoveoPager"></div>
     </div>
+</div>
+<div class="CoveoHiddenQuery"></div>
+<div class="CoveoDidYouMean"></div>
+<div class="CoveoErrorReport"></div>
+</div>
+</div>
 </body>
 
 </html>

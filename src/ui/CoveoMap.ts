@@ -8,10 +8,6 @@ import {
     IQuerySuccessEventArgs,
     IQueryResult,
     IQueryResults,
-    IQueryBuilderExpression,
-    ExpressionBuilder,
-    AnchorUtils,
-    result,
 } from 'coveo-search-ui';
 
 export class CoveoMap extends Component {
@@ -37,6 +33,10 @@ export class CoveoMap extends Component {
     }
 
     private onBuildingQuery(args: IBuildingQueryEventArgs) {
+        const queryBuilder = args.queryBuilder;
+        const currentLatitude = this.googleMap.getCenter()['lat']();
+        const currentLongitude = this.googleMap.getCenter()['lng']();
+        queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
     }
 
     private initCluster(args: IQuerySuccessEventArgs) {
@@ -66,12 +66,6 @@ export class CoveoMap extends Component {
         }
     }
 
-    private populateInfoWindow(result: IQueryResult) {
-        this.infoWindow = new google.maps.InfoWindow({
-            content : '<h2>' + result.raw.businessname + '</h2>' + '</h2>' + '<h3>$' + result.raw.price.toLocaleString() + '</h3><br><h3>' + result.raw.department + '</h3><br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone
-        });
-    }
-
     private getMarker(result: IQueryResult) {
         const key = result.raw.sysrowid;
         if (!this.markers[key]) {
@@ -86,12 +80,21 @@ export class CoveoMap extends Component {
             position: resultPosition
         });
         marker.addListener('click', () => {
+            if (this.infoWindow) {
+                this.infoWindow.close();
+            }
             this.populateInfoWindow(result);
             this.infoWindow.open(this.googleMap, marker);
         });
         marker.set('markerid', result.raw.markerid);
         marker.setMap(this.googleMap);
         return marker;
+    }
+
+    private populateInfoWindow(result: IQueryResult) {
+        this.infoWindow = new google.maps.InfoWindow({
+            content : '<h2>' + result.raw.businessname + '</h2>' + '</h2>' + '<h3>$' + result.raw.price.toLocaleString() + '</h3><br><h3>' + result.raw.department + '</h3><br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone
+        });
     }
 
     private clearRelevantMarker() {
@@ -104,19 +107,19 @@ export class CoveoMap extends Component {
         this.googleMap.setZoom(zoomLevel);
     }
 
+    public centerMapOnPoint(latitude, longitude) {
+        this.googleMap.setCenter({ lat: latitude + 0.015, lng: longitude });
+    }
+
     public focusOnMarker(markerid) {
         Object.keys(this.markers).forEach((key) => {
             if (this.markers[key]['markerid'] == markerid) {
-                this.setZoomLevel(14);
+                // this.setZoomLevel(14);
                 this.centerMapOnPoint(this.markers[key].getPosition()['lat'](), this.markers[key].getPosition()['lng']());
                 google.maps.event.trigger(this.markers[key], 'click');
             }
         });
         document.getElementById('CoveoMap').scrollIntoView();
-    }
-
-    public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude + 0.015, lng: longitude });
     }
 }
 
