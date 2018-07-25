@@ -39,4 +39,25 @@
 }
 
 .CoveoSearchInterface .coveo-main-section {
-  max-width: 1600px; }
+  max-width: 1600px; 
+}
+
+.SearchAgain {  
+  float: right;
+  block-size: 40px;
+  font-size: 15px;
+  background-color: white;
+  color:#1d4f76;;
+  border-radius: 5px;
+}
+
+.SearchAgainWrapper{
+  float: right;
+  padding-top: 4px;
+  
+  :hover {
+    color: #EC8612;
+    cursor: pointer;
+  }
+
+}
