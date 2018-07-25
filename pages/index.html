@@ -27,13 +27,13 @@
 <body id="search" class='CoveoSearchInterface' data-enable-history="true" data-auto-trigger-query="true" data-results-per-page='50'></body>
 <img class="CoveoLogoOverlay" src="https://www.acumensolutions.com/sites/default/files/logos/coveo%20white.png" />
 <div class="CoveoMapWraper">
-    <div class="CoveoMap" id="CoveoMap"></div>
+    <div class="CoveoMap" id="CoveoMap" data-info-window-template="#CoveoMapResultTemplate"></div>
 </div>
 <div class='coveo-search-section'>
-    <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder="">
-        <span class="CoveoFieldSuggestions" data-field='@city'></span>
-        <span class="CoveoFieldSuggestions" data-field='@department'></span>
-        <div class="CoveoFacetValueSuggestions" data-field="@department" data-use-query-suggestions='false' data-use-value-from-searchbox='true'></div>
+    <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder=""  data-enable-query-syntax="true">
+        <span class="CoveoFieldSuggestions" data-field='@city' data-header-title="City"></span>
+        <span class="CoveoFieldSuggestions" data-field='@department' data-header-title="Type of Commerce"></span>
+        <!-- <span class="FacetValueSuggestions" data-field='@city' data-header-title="State" data-display-estimate-number-of-results='true' data-use-query-suggestions='false' data-use-value-from-searchbox='true'></span> -->
     </div>
     <div class=SearchAgainWrapper>
         <button class=SearchAgain> Search this area </button>
@@ -55,7 +55,6 @@
                 <span class="CoveoQueryDuration"></span>
             </div>
             <div class="coveo-sort-section">
-                <span class="CoveoSort" data-sort-criteria="@distance ascending" data-caption="Distance"></span>
                 <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
             </div>
         </div>
@@ -92,7 +91,7 @@
                             </div>                            
                         </div>
                         <div class="coveo-result-row">
-                            <div class="coveo-result-cell" style="font-size:17px;">
+                            <div class="coveo-result-cell" style="font-size:17px; font-weight:700">
                                 <span class="CoveoFieldValue" data-field="@price" data-helper="currency"></span>
                             </div>
                         </div>

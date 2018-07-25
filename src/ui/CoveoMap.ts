@@ -8,18 +8,33 @@ import {
     IQuerySuccessEventArgs,
     IQueryResult,
     IQueryResults,
+    ComponentOptions,
+    Template,
+    DefaultResultTemplate,
+    TemplateCache,
+    TemplateList,
+    TemplateComponentOptions,
 } from 'coveo-search-ui';
+
+export interface ICoveoMapOptions {
+    infoWindowTemplate: Template;
+  }
 
 export class CoveoMap extends Component {
     static ID = 'Map';
+    static options: ICoveoMapOptions = {
+        infoWindowTemplate: ComponentOptions.buildTemplateOption({idAttr: '#CoveoMapResultTemplate'})
+    };
+
     private googleMap: google.maps.Map;
     private markers: { [key: string]: google.maps.Marker };
     private cluster: MarkerClusterer;
     private markersToCluster = [];
     private infoWindow: google.maps.InfoWindow;
 
-    constructor(public element: HTMLElement, public bindings: IComponentBindings) {
+    constructor(public element: HTMLElement, public options: ICoveoMapOptions,  public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
+        this.options = ComponentOptions.initComponentOptions(element, CoveoMap, options);
         this.markers = {};
         this.bind.onRootElement(QueryEvents.buildingQuery, (args: IBuildingQueryEventArgs) => this.onBuildingQuery(args));
         this.bind.onRootElement(QueryEvents.querySuccess, (args: IQuerySuccessEventArgs) => this.onQuerySuccess(args));
@@ -37,6 +52,7 @@ export class CoveoMap extends Component {
         const currentLatitude = this.googleMap.getCenter()['lat']();
         const currentLongitude = this.googleMap.getCenter()['lng']();
         queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
+        queryBuilder.advancedExpression.add('$qrf(expression:\'300 - @distance\', normalizeWeight: true)');
     }
 
     private initCluster(args: IQuerySuccessEventArgs) {
@@ -93,7 +109,7 @@ export class CoveoMap extends Component {
 
     private populateInfoWindow(result: IQueryResult) {
         this.infoWindow = new google.maps.InfoWindow({
-            content : '<h2>' + result.raw.businessname + '</h2>' + '</h2>' + '<h3>$' + result.raw.price.toLocaleString() + '</h3><br><h3>' + result.raw.department + '</h3><br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone
+            content : '<H3>' + result.raw.businessname + '</H3>' + '<h4> in ' + result.raw.city + ', ' + result.raw.state + '</h4>'
         });
     }
 
