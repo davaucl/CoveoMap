@@ -33,8 +33,10 @@
   box-shadow: 3px 3px 10px rgba(0,0,0, 0.2);
 }
 
-.CoveoMapResultTemplate h1,
-.CoveoMapResultTemplate h2,
-.CoveoMapResultTemplate h3 {
+.magic-box .magic-box-suggestions .magic-box-suggestion{
   line-height: 10px;
+  font-size: 14px;
 }
+
+.CoveoSearchInterface .coveo-main-section {
+  max-width: 1600px; }

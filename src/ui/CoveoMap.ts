@@ -68,7 +68,7 @@ export class CoveoMap extends Component {
 
     private populateInfoWindow(result: IQueryResult) {
         this.infoWindow = new google.maps.InfoWindow({
-            content : '<h2>' + result.raw.businessname + '</h2>' + '</h2>' + '<h3>$' + result.raw.price.toLocaleString() + '</h3><br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone
+            content : '<h2>' + result.raw.businessname + '</h2>' + '</h2>' + '<h3>$' + result.raw.price.toLocaleString() + '</h3><br><h3>' + result.raw.department + '</h3><br>' + result.raw.city + '<br>'  + result.raw.state + '<br>' + result.raw.phone
         });
     }
 
@@ -96,7 +96,7 @@ export class CoveoMap extends Component {
 
     private clearRelevantMarker() {
         Object.keys(this.markers).forEach((key) => {
-            this.markers[key].setOpacity(0.2);
+            this.markers[key].setOpacity(0.3);
         });
     }
 
@@ -107,7 +107,7 @@ export class CoveoMap extends Component {
     public focusOnMarker(markerid) {
         Object.keys(this.markers).forEach((key) => {
             if (this.markers[key]['markerid'] == markerid) {
-                this.setZoomLevel(19);
+                this.setZoomLevel(14);
                 this.centerMapOnPoint(this.markers[key].getPosition()['lat'](), this.markers[key].getPosition()['lng']());
                 google.maps.event.trigger(this.markers[key], 'click');
             }
@@ -116,7 +116,7 @@ export class CoveoMap extends Component {
     }
 
     public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude + 0.01, lng: longitude });
+        this.googleMap.setCenter({ lat: latitude + 0.015, lng: longitude });
     }
 }
 

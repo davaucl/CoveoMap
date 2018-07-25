@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height">
@@ -23,57 +24,87 @@
     </script>
 </head>
 
-<body id="search" class='CoveoSearchInterface' data-enable-history="true" data-auto-trigger-query="true"></body>
-    <img class="CoveoLogoOverlay" src="https://www.acumensolutions.com/sites/default/files/logos/coveo%20white.png" />
-    <div class="CoveoMapWraper">
-        <div class="CoveoMap" id="CoveoMap"></div>
+<body id="search" class='CoveoSearchInterface' data-enable-history="true" data-auto-trigger-query="true" data-results-per-page='50'></body>
+<img class="CoveoLogoOverlay" src="https://www.acumensolutions.com/sites/default/files/logos/coveo%20white.png" />
+<div class="CoveoMapWraper">
+    <div class="CoveoMap" id="CoveoMap"></div>
+</div>
+<div class='coveo-search-section'>
+    <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder="">
+        <span class="CoveoFieldSuggestions" data-field='@city'></span>
+        <span class="CoveoFieldSuggestions" data-field='@department'></span>
+        <div class="CoveoFacetValueSuggestions" data-field="@department" data-use-query-suggestions='false' data-use-value-from-searchbox='true'></div>
     </div>
-    <div class='coveo-search-section'>
-        <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder="">
-            <span class="CoveoFieldSuggestions" data-field='@city'></span>
-        </div>
+</div>
+<div class="coveo-main-section">
+    <div class="coveo-facet-column">
+        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="10" data-range-slider="true"></div>
+        <div class="CoveoFacetSlider" data-title="Ratings" data-field="@ratings" data-graph-steps="4" data-range-slider="true"></div>
+        <div class="CoveoFacet" data-title="Departement" data-field="@department" data-tab="All"></div>
+        <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
+        <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
     </div>
-    <div class="coveo-main-section">
-        <div class="coveo-facet-column">
-            <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="10" data-range-slider="true"></div>
-            <div class="CoveoFacetSlider" data-title="Ratings" data-field="@ratings" data-graph-steps="5"></div>
-            <div class="CoveoFacet" data-title="Departement" data-field="@departement" data-tab="All"></div>
-            <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
-            <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
-        </div>
-        <div class="coveo-results-column">
-            <div class="CoveoBreadcrumb"></div>
-            <div class="coveo-results-header">
-                <div class="coveo-summary-section">
-                    <span class="CoveoQuerySummary"></span>
-                    <span class="CoveoQueryDuration"></span>
-                </div>
-                <div class="coveo-sort-section">
-                    <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
-                    <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
-                </div>
+    <div class="coveo-results-column">
+        <div class="CoveoBreadcrumb"></div>
+        <div class="coveo-results-header">
+            <div class="coveo-summary-section">
+                <span class="CoveoQuerySummary"></span>
+                <span class="CoveoQueryDuration"></span>
             </div>
-            <div class="CoveoResultList">
-                <script id="CoveoMapResultTemplate" type="text/underscore" class="result-template">
-                    <div class="CoveoMapResultTemplate" onClick="CoveoMap.CoveoMap.focusOnMarker('<%- raw.mapuniqid%>')">
-                        <h1><%- raw.businessname %> </h1>
-                        <h2><%- raw.city %></h2>
-                        <h3>$ <%- raw.price.toLocaleString() %> </h3>
-                        <h3>Rating <%- raw.ratings %> </h3>
-                        <div class=""><%- raw.email %></div>
-                        <div class=""><%- raw.postcode %></div>
-                        <div class=""><%- raw.state %></div>
-                        <div class=""><%- raw.phone %></div>
+            <div class="coveo-sort-section">
+                <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
+                <span class="CoveoSort" data-sort-criteria="date descending,date ascending" data-caption="Date"></span>
+            </div>
+        </div>
+        <div class="CoveoResultList" data-layout="card">
+            <script id="CoveoMapResultTemplate" class="result-template" type="text/html" data-layout="card">
+                <div class="coveo-result-frame CoveoMapResultTemplate" onClick="CoveoMap.CoveoMap.focusOnMarker('<%- raw.markerid %>')">
+                    <div class="coveo-result-row">
+                        <div class="coveo-result-cell" style="padding-left:15px;">
+                            <div class="coveo-result-row">
+                                <div class="coveo-result-cell" style="font-size:24px;">
+                                    <span class="CoveoFieldValue" data-field="@businessname"></span>
+                                </div>
+                                <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:17px">
+                                    <span class="CoveoFieldValue Departement" data-field="@department"></span><br>
+                                </div>
+                            </div>
+                        <div class="coveo-result-row">
+                            <div class="coveo-result-cell" style="font-size:17px;">
+                                <span class="CoveoText" data-value="in"></span>
+                                <span class="CoveoFieldValue" data-field="@city"></span><br>
+                                <span class="CoveoFieldValue" data-field="@state"></span>
+                            </div>
+                            <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:14px">
+                                <span class="CoveoText" data-value="Rated "></span>
+                                <span class="CoveoFieldValue" data-field="@ratings"></span>
+                            </div>                            
+                        </div>
+                        <div class="coveo-result-row">
+                            <div class="coveo-result-cell" style="font-size:17px;">
+                                <span class="CoveoFieldValue" data-field="@price" data-helper="currency"></span>
+                            </div>
+                        </div>
+                        <div class="coveo-result-row">
+                            <div class="coveo-result-cell">
+                                <span class="CoveoFieldValue" data-field="@phone"></span><br>
+                                <span class="CoveoFieldValue" data-field="@email"></span>
+                            </div>
+                        </div>
                     </div>
-                </script>
-            </div>
-            <div class="CoveoPager"></div>
+                </div>
+                <div class="coveo-result-row">
+                    <div class="coveo-result-cell" style="width:85px;text-align:center"></div></div>
+                </div>
+            </script>
         </div>
-    </div>
-    <div class="CoveoHiddenQuery"></div>
-    <div class="CoveoDidYouMean"></div>
-    <div class="CoveoErrorReport"></div>
-    </div>
+                    <div class="CoveoPager"></div>
+                </div>
+            </div>
+            <div class="CoveoHiddenQuery"></div>
+            <div class="CoveoDidYouMean"></div>
+            <div class="CoveoErrorReport"></div>
+        </div>
     </div>
 </body>
 
