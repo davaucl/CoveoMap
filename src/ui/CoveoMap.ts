@@ -41,30 +41,33 @@ export class CoveoMap extends Component {
         this.bind.onRootElement(InitializationEvents.afterInitialization, () => this.initMap());
     }
 
-    private onQuerySuccess(args: IQuerySuccessEventArgs) {
-        this.clearRelevantMarker();
-        this.plotItem(args.results);
-        this.initCluster(args);
-    }
-
-    private onBuildingQuery(args: IBuildingQueryEventArgs) {
-        const queryBuilder = args.queryBuilder;
-        const currentLatitude = this.googleMap.getCenter()['lat']();
-        const currentLongitude = this.googleMap.getCenter()['lng']();
-        queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
-        queryBuilder.advancedExpression.add('$qrf(expression:\'300 - @distance\', normalizeWeight: true)');
-    }
-
-    private initCluster(args: IQuerySuccessEventArgs) {
-        this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 40 });
-    }
-
     private initMap() {
         this.googleMap = new google.maps.Map(this.element, {
             center: { lat: -33.839, lng: 151.211 },
             zoom: 12
         });
         this.getPersistentMarkers();
+    }
+
+    private onBuildingQuery(args: IBuildingQueryEventArgs) {
+        const queryBuilder = args.queryBuilder;
+        const currentLatitude = this.googleMap.getCenter()['lat']();
+        const currentLongitude = this.googleMap.getCenter()['lng']();
+        // get distance for each result relative to the user point of view
+        queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
+        // adjust item score based on distance
+        queryBuilder.advancedExpression.add('$qrf(expression:\'(1000-@distance)\')');
+        // adjust item score based on ranking
+        queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings*10\')');
+    }
+    private onQuerySuccess(args: IQuerySuccessEventArgs) {
+        this.clearRelevantMarker();
+        this.plotItem(args.results);
+        this.initCluster(args);
+    }
+
+    private initCluster(args: IQuerySuccessEventArgs) {
+        this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 40 });
     }
 
     private getPersistentMarkers() {
@@ -93,7 +96,7 @@ export class CoveoMap extends Component {
     private createMarker(result: IQueryResult) {
         const resultPosition = { lat: result.raw.latitude, lng: result.raw.longitude };
         const marker = new google.maps.Marker({
-            position: resultPosition
+            position: resultPosition,
         });
         marker.addListener('click', () => {
             if (this.infoWindow) {
@@ -130,9 +133,11 @@ export class CoveoMap extends Component {
     public focusOnMarker(markerid) {
         Object.keys(this.markers).forEach((key) => {
             if (this.markers[key]['markerid'] == markerid) {
+                const marker = this.markers[key];
                 // this.setZoomLevel(14);
-                this.centerMapOnPoint(this.markers[key].getPosition()['lat'](), this.markers[key].getPosition()['lng']());
-                google.maps.event.trigger(this.markers[key], 'click');
+                this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
+                google.maps.event.trigger(marker, 'click');
+                marker.setAnimation(google.maps.Animation.BOUNCE);
             }
         });
         document.getElementById('CoveoMap').scrollIntoView();
