@@ -67,7 +67,7 @@ export class CoveoMap extends Component {
     }
 
     private initCluster(args: IQuerySuccessEventArgs) {
-        this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 40 });
+        // this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 40 });
     }
 
     private getPersistentMarkers() {
