@@ -35,7 +35,8 @@ export class CoveoMap extends Component {
     };
 
     private googleMap: google.maps.Map;
-    private markers: { [key: string]: google.maps.Marker };
+    private resultMarkers: { [key: string]: IResultMarker };
+    private markersToCluster = [];
     private infoWindows: google.maps.InfoWindow[] = [];
     private searchArea: boolean;
 
@@ -91,8 +92,10 @@ export class CoveoMap extends Component {
 
     private plotItem(args: IQueryResults) {
         for (const result of args.results) {
-            const marker = this.getMarker(result);
-            marker.setOpacity(1);
+            const resultMarker = this.getResultMarker(result);
+            resultMarker.result = result;
+            resultMarker.marker.setOpacity(1);
+            this.markersToCluster.push(resultMarker.marker);
         }
         if (args.pipeline != 'persistent' && args.totalCount > 0) {
             this.focusOnMarker(args.results[0].raw.markerid);
@@ -191,11 +194,9 @@ export class CoveoMap extends Component {
             this.centerMapOnPoint(lat(), lng());
             google.maps.event.trigger(marker, 'click');
             marker.setAnimation(google.maps.Animation.DROP);
-            const customEventCause = {name: 'resultClick', type: 'customEventType'};
-            const metaData = {key1: 'value1', key2: 'value2'};
-            Coveo.logClickEvent(document.body, customEventCause, metaData, null);
+            const overlay = new google.maps.OverlayView();
         });
-        document.getElementById('CoveoMap').scrollIntoView();
+        this.element.scrollIntoView();
     }
 }
 
