@@ -35,14 +35,13 @@
     <div class='coveo-search-section'>
         <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder=""  data-enable-query-syntax="true">
             <span class="CoveoFieldSuggestions" data-field='@city' data-header-title="City"></span>
-            <!-- <span class="CoveoFieldSuggestions" data-field='@department' data-header-title="Type of Commerce"></span> -->
-            <span class="FacetValueSuggestions" data-field='@department' data-header-title="State" data-display-estimate-number-of-results='true' data-use-query-suggestions='false' data-use-value-from-searchbox='true'></span>
+            <span class="CoveoFieldSuggestions" data-field='@department' data-header-title="Type of Commerce"></span>
         </div>
     </div>
 </div>
 <div class="coveo-main-section">
     <div class="coveo-facet-column">
-        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="11" data-range-slider="true"></div>
+        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="5" data-range-slider="true"></div>
         <div class="CoveoFacetRange Ratings" data-title="Ratings" data-field="@ratings" data-custom-sort="★★★★★,★★★★,★★★,★★,★,-" data-ranges='[{"start": 0, "end": 1, "label": "-", "endInclusive": false}, {"start": 1, "end": 2, "label": "★", "endInclusive": false}, {"start": 1, "end": 2, "label": "★★", "endInclusive": false}, {"start": 2, "end": 3, "label": "★★★", "endInclusive": false}, {"start": 3, "end": 4, "label": "★★★★", "endInclusive": false}, {"start": 4, "end": 5, "label": "★★★★★", "endInclusive": false}]'></div>
         <div class="CoveoFacet" data-title="Departement" data-field="@department" data-tab="All"></div>
         <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>

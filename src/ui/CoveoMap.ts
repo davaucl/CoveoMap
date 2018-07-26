@@ -13,6 +13,7 @@ import {
     TemplateCache,
     QueryController,
     AdvancedSearch,
+    HtmlTemplate,
 } from 'coveo-search-ui';
 
 export interface ICoveoMapOptions {
@@ -97,9 +98,10 @@ export class CoveoMap extends Component {
             resultMarker.marker.setOpacity(1);
             resultMarker.marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
             this.markersToCluster.push(resultMarker.marker);
-        }
-        if (args.pipeline != 'persistent' && args.totalCount > 0) {
-            this.focusOnMarker(args.results[0].raw.markerid);
+            if (args.pipeline != 'persistent' && args.totalCount > 0) {
+                const { lat, lng } = resultMarker.marker.getPosition().toJSON();
+                this.centerMapOnPoint(lat, lng);
+            }
         }
     }
 
@@ -131,7 +133,6 @@ export class CoveoMap extends Component {
             },
             zIndex: 100
         });
-
         marker.setMap(this.googleMap);
 
         return marker;
@@ -153,6 +154,7 @@ export class CoveoMap extends Component {
                     this.closeAllInfoWindows();
                     infoWindow.setContent(element);
                     infoWindow.open(this.googleMap, marker);
+                    this.sendClickEvent(resultMarker);
                     resultMarker.isOpen = true;
                 });
             } else {
@@ -181,6 +183,16 @@ export class CoveoMap extends Component {
         });
     }
 
+    private sendClickEvent(resultMarker: IResultMarker) {
+        const customEventCause = {name: 'Click', type: 'document'};
+        let relevant = 'true';
+        if (resultMarker.marker.getOpacity() != 1) {
+            relevant = 'false';
+        }
+        const metadata = {relevantMarker: relevant, department: resultMarker.result.raw.department, businessname: resultMarker.result.raw.businessname, city: resultMarker.result.raw.city, state: resultMarker.result.raw.state, price: resultMarker.result.raw.price};
+        Coveo.logCustomEvent(document.body, customEventCause, metadata);
+    }
+
     private setZoomLevel(zoomLevel) {
         this.googleMap.setZoom(zoomLevel);
     }
@@ -188,6 +200,7 @@ export class CoveoMap extends Component {
     public centerMapOnPoint(latitude, longitude) {
         this.googleMap.setCenter({ lat: latitude + 0.010, lng: longitude });
     }
+
 
     public focusOnMarker(markerId: string) {
         Object.keys(this.resultMarkers)
@@ -199,7 +212,6 @@ export class CoveoMap extends Component {
             this.centerMapOnPoint(lat, lng);
             google.maps.event.trigger(marker, 'click');
             marker.setAnimation(google.maps.Animation.DROP);
-            const overlay = new google.maps.OverlayView();
         });
         this.element.scrollIntoView();
     }
