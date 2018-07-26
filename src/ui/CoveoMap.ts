@@ -19,6 +19,13 @@ export interface ICoveoMapOptions {
     template: Template;
 }
 
+interface IResultMarker {
+    result: IQueryResult;
+    marker: google.maps.Marker;
+    infoWindow?: google.maps.InfoWindow;
+    isOpen: boolean;
+}
+
 export class CoveoMap extends Component {
     static ID = 'Map';
     static options: ICoveoMapOptions = {
@@ -28,7 +35,7 @@ export class CoveoMap extends Component {
     };
 
     private googleMap: google.maps.Map;
-    private markers: { [key: string]: google.maps.Marker };
+    private resultMarkers: { [key: string]: IResultMarker };
     private markersToCluster = [];
     private infoWindows: google.maps.InfoWindow[] = [];
     private searchArea: boolean;
@@ -36,7 +43,7 @@ export class CoveoMap extends Component {
     constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
         this.options = ComponentOptions.initComponentOptions(element, CoveoMap, options);
-        this.markers = {};
+        this.resultMarkers = {};
         this.bind.onRootElement(QueryEvents.buildingQuery, (args: IBuildingQueryEventArgs) => this.onBuildingQuery(args));
         this.bind.onRootElement(QueryEvents.querySuccess, (args: IQuerySuccessEventArgs) => this.onQuerySuccess(args));
         this.bind.onRootElement(InitializationEvents.afterInitialization, () => this.initMap());
@@ -85,51 +92,75 @@ export class CoveoMap extends Component {
 
     private plotItem(args: IQueryResults) {
         for (const result of args.results) {
-            const marker = this.getMarker(result);
-            marker.setOpacity(1);
-            this.markersToCluster.push(marker);
+            const resultMarker = this.getResultMarker(result);
+            resultMarker.result = result;
+            resultMarker.marker.setOpacity(1);
+            this.markersToCluster.push(resultMarker.marker);
         }
-        if (args.pipeline != 'persistent') {
+        if (args.pipeline != 'persistent' && args.totalCount > 0) {
             this.focusOnMarker(args.results[0].raw.markerid);
         }
     }
 
-    private getMarker(result: IQueryResult) {
+    private getResultMarker(result: IQueryResult): IResultMarker {
         const key = result.raw.sysrowid;
-        if (!this.markers[key]) {
-            this.markers[key] = this.createMarker(result);
+        if (!this.resultMarkers[key]) {
+            this.resultMarkers[key] = this.createResultMarker(result);
         }
-        this.markers[key].setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
-        return this.markers[key];
+        return this.resultMarkers[key];
     }
 
-    private createMarker(result: IQueryResult) {
-        const resultPosition = { lat: result.raw.latitude, lng: result.raw.longitude };
+    private createResultMarker(result: IQueryResult): IResultMarker {
+        const marker = this.createMarker(result);
+
+        const resultMarker: IResultMarker = {
+            marker, result, isOpen: false
+        };
+
+        this.attachInfoWindowOnClick(resultMarker);
+
+        return resultMarker;
+    }
+
+    private createMarker(result: IQueryResult): google.maps.Marker {
         const marker = new google.maps.Marker({
-            position: resultPosition,
-            zIndex: 100
+            position: {
+                lat: result.raw.latitude,
+                lng: result.raw.longitude
+            },
+            zIndex: 100,
+            icon: 'http://www.osteokinesis.it/img/icons/map-marker.png',
         });
 
-        marker.addListener('click', () => {
-            this.closeAllInfoWindows();
-            let infoWindow: google.maps.InfoWindow;
-            if (!infoWindow) {
-                    this.instantiateTemplate(result).then(element => {
-                        infoWindow = new google.maps.InfoWindow({
-                            content: element,
-                            maxWidth: 600
-                        });
-                        infoWindow.open(this.googleMap, marker);
-                        this.infoWindows.push(infoWindow);
-
-                    });
-                } else {
-                    infoWindow.close();
-                }
-        });
         marker.set('markerid', result.raw.markerid);
         marker.setMap(this.googleMap);
+
         return marker;
+    }
+
+    private attachInfoWindowOnClick(resultMarker: IResultMarker) {
+        const { marker } = resultMarker;
+        marker.addListener('click', () => {
+            const { result } = resultMarker;
+            let { infoWindow, isOpen } = resultMarker;
+            if (!infoWindow) {
+                infoWindow = new google.maps.InfoWindow({
+                    maxWidth: 600
+                });
+                this.infoWindows.push(infoWindow);
+            }
+            if (!isOpen) {
+                this.instantiateTemplate(result).then(element => {
+                    this.closeAllInfoWindows();
+                    infoWindow.setContent(element);
+                    infoWindow.open(this.googleMap, marker);
+                    isOpen = true;
+                });
+            } else {
+                isOpen = false;
+                infoWindow.close();
+            }
+        });
     }
 
     private closeAllInfoWindows() {
@@ -137,8 +168,8 @@ export class CoveoMap extends Component {
     }
 
     private clearRelevantMarker() {
-        Object.keys(this.markers).forEach((key) => {
-            const marker = this.markers[key];
+        Object.keys(this.resultMarkers).forEach((key) => {
+            const { marker } = this.resultMarkers[key];
             marker.setOpacity(0.2);
             marker.setZIndex(90);
             marker.setIcon(null);
@@ -153,17 +184,19 @@ export class CoveoMap extends Component {
         this.googleMap.setCenter({ lat: latitude + 0.010, lng: longitude });
     }
 
-    public focusOnMarker(markerid) {
-        Object.keys(this.markers).filter(key => this.markers[key]['markerid'] == markerid)
+    public focusOnMarker(markerId: string) {
+        Object.keys(this.resultMarkers)
+        .filter(key => this.resultMarkers[key]['markerid'] == markerId)
         .forEach((key) => {
-            const marker = this.markers[key];
+            const { marker } = this.resultMarkers[key];
             // this.setZoomLevel(14);
-            this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
+            const { lat, lng } = marker.getPosition();
+            this.centerMapOnPoint(lat(), lng());
             google.maps.event.trigger(marker, 'click');
             marker.setAnimation(google.maps.Animation.DROP);
             const overlay = new google.maps.OverlayView();
         });
-        document.getElementById('CoveoMap').scrollIntoView();
+        this.element.scrollIntoView();
     }
 }
 
