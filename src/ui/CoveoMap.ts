@@ -117,9 +117,11 @@ export class CoveoMap extends Component {
                     this.instantiateTemplate(result).then(element => {
                         infoWindow = new google.maps.InfoWindow({
                             content: element,
+                            maxWidth: 600
                         });
                         infoWindow.open(this.googleMap, marker);
                         this.infoWindows.push(infoWindow);
+
                     });
                 } else {
                     infoWindow.close();
@@ -148,7 +150,7 @@ export class CoveoMap extends Component {
     }
 
     public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude - 0.015, lng: longitude });
+        this.googleMap.setCenter({ lat: latitude + 0.010, lng: longitude });
     }
 
     public focusOnMarker(markerid) {
@@ -159,6 +161,7 @@ export class CoveoMap extends Component {
             this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
             google.maps.event.trigger(marker, 'click');
             marker.setAnimation(google.maps.Animation.DROP);
+            const overlay = new google.maps.OverlayView();
         });
         document.getElementById('CoveoMap').scrollIntoView();
     }
