@@ -20,8 +20,11 @@
 .coveo-search-section {
   position: absolute;
   top: -40px;
-  right: 30%;
   width: 100%; }
+
+.coveo-search-section-wrapper {
+  display: flex;
+  justify-content: center; }
 
 .CoveoSearchButton {
   background-color: white; }
