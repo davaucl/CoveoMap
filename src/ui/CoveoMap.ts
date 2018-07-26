@@ -11,6 +11,8 @@ import {
     ComponentOptions,
     Template,
     TemplateCache,
+    QueryController,
+    AdvancedSearch,
 } from 'coveo-search-ui';
 
 export interface ICoveoMapOptions {
@@ -29,6 +31,7 @@ export class CoveoMap extends Component {
     private markers: { [key: string]: google.maps.Marker };
     private markersToCluster = [];
     private infoWindows: google.maps.InfoWindow[] = [];
+    private searchArea: boolean;
 
     constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
