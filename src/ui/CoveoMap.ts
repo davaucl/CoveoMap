@@ -10,35 +10,42 @@ import {
     IQueryResults,
     ComponentOptions,
     Template,
-    DefaultResultTemplate,
     TemplateCache,
-    TemplateList,
-    TemplateComponentOptions,
 } from 'coveo-search-ui';
 
 export interface ICoveoMapOptions {
-    infoWindowTemplate: Template;
-  }
+    template: Template;
+}
 
 export class CoveoMap extends Component {
     static ID = 'Map';
     static options: ICoveoMapOptions = {
-        infoWindowTemplate: ComponentOptions.buildTemplateOption({idAttr: '#CoveoMapResultTemplate'})
+        template: ComponentOptions.buildTemplateOption({
+            defaultFunction: () => TemplateCache.getDefaultTemplate('Default')
+        })
     };
 
     private googleMap: google.maps.Map;
     private markers: { [key: string]: google.maps.Marker };
-    private cluster: MarkerClusterer;
     private markersToCluster = [];
-    private infoWindow: google.maps.InfoWindow;
+    private infoWindows: google.maps.InfoWindow[] = [];
 
-    constructor(public element: HTMLElement, public options: ICoveoMapOptions,  public bindings: IComponentBindings) {
+    constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
         this.options = ComponentOptions.initComponentOptions(element, CoveoMap, options);
         this.markers = {};
         this.bind.onRootElement(QueryEvents.buildingQuery, (args: IBuildingQueryEventArgs) => this.onBuildingQuery(args));
         this.bind.onRootElement(QueryEvents.querySuccess, (args: IQuerySuccessEventArgs) => this.onQuerySuccess(args));
         this.bind.onRootElement(InitializationEvents.afterInitialization, () => this.initMap());
+    }
+
+    private instantiateTemplate(result: IQueryResult): Promise<HTMLElement> {
+        return this.options.template.instantiateToElement(result).then(element => {
+            Component.bindResultToElement(element, result);
+            return Initialization.automaticallyCreateComponentsInsideResult(element, result).initResult.then(() => {
+                return element;
+            });
+        });
     }
 
     private initMap() {
@@ -61,17 +68,16 @@ export class CoveoMap extends Component {
         queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings*10\')');
     }
     private onQuerySuccess(args: IQuerySuccessEventArgs) {
+        this.closeAllInfoWindows();
         this.clearRelevantMarker();
         this.plotItem(args.results);
-        this.initCluster(args);
-    }
-
-    private initCluster(args: IQuerySuccessEventArgs) {
-        // this.cluster = new MarkerClusterer(this.googleMap, this.markersToCluster, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', minimumClusterSize: 40 });
     }
 
     private getPersistentMarkers() {
-        Coveo.SearchEndpoint.endpoints.default.search({ q: '', numberOfResults: 1000, pipeline: 'persistent' }).then((results) => this.plotItem(results));
+        Coveo.SearchEndpoint.endpoints.default.search({ q: '', numberOfResults: 1000, pipeline: 'persistent' }).then((results) => {
+            results.results.forEach(result => result.searchInterface = this.searchInterface);
+            this.plotItem(results);
+        });
     }
 
     private plotItem(args: IQueryResults) {
@@ -100,22 +106,29 @@ export class CoveoMap extends Component {
             position: resultPosition,
             zIndex: 100
         });
+
         marker.addListener('click', () => {
-            if (this.infoWindow) {
-                this.infoWindow.close();
-            }
-            this.populateInfoWindow(result);
-            this.infoWindow.open(this.googleMap, marker);
+            this.closeAllInfoWindows();
+            let infoWindow: google.maps.InfoWindow;
+            if (!infoWindow) {
+                    this.instantiateTemplate(result).then(element => {
+                        infoWindow = new google.maps.InfoWindow({
+                            content: element,
+                        });
+                        infoWindow.open(this.googleMap, marker);
+                        this.infoWindows.push(infoWindow);
+                    });
+                } else {
+                    infoWindow.close();
+                }
         });
         marker.set('markerid', result.raw.markerid);
         marker.setMap(this.googleMap);
         return marker;
     }
 
-    private populateInfoWindow(result: IQueryResult) {
-        this.infoWindow = new google.maps.InfoWindow({
-            content : '<H3>' + result.raw.businessname + '</H3>' + '<h4> in ' + result.raw.city + ', ' + result.raw.state + '</h4>'
-        });
+    private closeAllInfoWindows() {
+        this.infoWindows.forEach(oldInfowindow => oldInfowindow.close());
     }
 
     private clearRelevantMarker() {
@@ -132,18 +145,17 @@ export class CoveoMap extends Component {
     }
 
     public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude, lng: longitude });
+        this.googleMap.setCenter({ lat: latitude - 0.015, lng: longitude });
     }
 
     public focusOnMarker(markerid) {
-        Object.keys(this.markers).forEach((key) => {
-            if (this.markers[key]['markerid'] == markerid) {
-                const marker = this.markers[key];
-                // this.setZoomLevel(14);
-                this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
-                google.maps.event.trigger(marker, 'click');
-                marker.setAnimation(google.maps.Animation.DROP);
-            }
+        Object.keys(this.markers).filter(key => this.markers[key]['markerid'] == markerid)
+        .forEach((key) => {
+            const marker = this.markers[key];
+            // this.setZoomLevel(14);
+            this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
+            google.maps.event.trigger(marker, 'click');
+            marker.setAnimation(google.maps.Animation.DROP);
         });
         document.getElementById('CoveoMap').scrollIntoView();
     }
