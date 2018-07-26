@@ -118,7 +118,7 @@ export class CoveoMap extends Component {
 
     private clearRelevantMarker() {
         Object.keys(this.markers).forEach((key) => {
-            this.markers[key].setOpacity(0.3);
+            this.markers[key].setOpacity(0.2);
         });
     }
 
@@ -127,7 +127,7 @@ export class CoveoMap extends Component {
     }
 
     public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude + 0.015, lng: longitude });
+        this.googleMap.setCenter({ lat: latitude, lng: longitude });
     }
 
     public focusOnMarker(markerid) {
