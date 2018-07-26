@@ -95,6 +95,7 @@ export class CoveoMap extends Component {
             const resultMarker = this.getResultMarker(result);
             resultMarker.result = result;
             resultMarker.marker.setOpacity(1);
+            resultMarker.marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
             this.markersToCluster.push(resultMarker.marker);
         }
         if (args.pipeline != 'persistent' && args.totalCount > 0) {
@@ -128,8 +129,7 @@ export class CoveoMap extends Component {
                 lat: result.raw.latitude,
                 lng: result.raw.longitude
             },
-            zIndex: 100,
-            icon: 'http://www.osteokinesis.it/img/icons/map-marker.png',
+            zIndex: 100
         });
 
         marker.setMap(this.googleMap);
@@ -140,22 +140,23 @@ export class CoveoMap extends Component {
     private attachInfoWindowOnClick(resultMarker: IResultMarker) {
         const { marker } = resultMarker;
         marker.addListener('click', () => {
-            const { result } = resultMarker;
-            let { infoWindow, isOpen } = resultMarker;
+            const { result, isOpen } = resultMarker;
+            let { infoWindow } = resultMarker;
             if (!infoWindow) {
                 infoWindow = new google.maps.InfoWindow({
                     maxWidth: 600
                 });
+                resultMarker.infoWindow = infoWindow;
             }
             if (!isOpen) {
                 this.instantiateTemplate(result).then(element => {
                     this.closeAllInfoWindows();
                     infoWindow.setContent(element);
                     infoWindow.open(this.googleMap, marker);
-                    isOpen = true;
+                    resultMarker.isOpen = true;
                 });
             } else {
-                isOpen = false;
+                resultMarker.isOpen = false;
                 infoWindow.close();
             }
         });
