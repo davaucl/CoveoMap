@@ -56,7 +56,7 @@ export class CoveoMap extends Component {
         // get distance for each result relative to the user point of view
         queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
         // adjust item score based on distance
-        queryBuilder.advancedExpression.add('$qrf(expression:\'(1000-@distance)\')');
+        queryBuilder.advancedExpression.add('$qrf(expression:\'300 - @distance\')');
         // adjust item score based on ranking
         queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings*10\')');
     }
@@ -90,6 +90,7 @@ export class CoveoMap extends Component {
         if (!this.markers[key]) {
             this.markers[key] = this.createMarker(result);
         }
+        this.markers[key].setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
         return this.markers[key];
     }
 
@@ -97,6 +98,7 @@ export class CoveoMap extends Component {
         const resultPosition = { lat: result.raw.latitude, lng: result.raw.longitude };
         const marker = new google.maps.Marker({
             position: resultPosition,
+            zIndex: 100
         });
         marker.addListener('click', () => {
             if (this.infoWindow) {
@@ -118,7 +120,10 @@ export class CoveoMap extends Component {
 
     private clearRelevantMarker() {
         Object.keys(this.markers).forEach((key) => {
-            this.markers[key].setOpacity(0.2);
+            const marker = this.markers[key];
+            marker.setOpacity(0.2);
+            marker.setZIndex(90);
+            marker.setIcon(null);
         });
     }
 
@@ -137,7 +142,7 @@ export class CoveoMap extends Component {
                 // this.setZoomLevel(14);
                 this.centerMapOnPoint(marker.getPosition()['lat'](), marker.getPosition()['lng']());
                 google.maps.event.trigger(marker, 'click');
-                marker.setAnimation(google.maps.Animation.BOUNCE);
+                marker.setAnimation(google.maps.Animation.DROP);
             }
         });
         document.getElementById('CoveoMap').scrollIntoView();
