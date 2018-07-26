@@ -73,14 +73,17 @@
 .CoveoSearchButtonveoFacet,
 .CoveoFacet {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  border: none; }
+  border: none;}
 
-.gm-style-iw div .coveo-card-layout.CoveoResult{
+.gm-style-iw div .coveo-card-layout.CoveoResult {
   box-shadow: none;
   margin: none;
   padding: none;
+  font-family: lato }
+
+.gm-style-iw div  coveo-clickable {
+  font-weight: 800;
 }
 
-.gm-style-iw .coveo-card-layout.CoveoResult .CoveoMapResultTemplate{
-  padding: 10px 0 0 0;
-}
+.gm-style-iw .coveo-card-layout.CoveoResult .CoveoMapResultTemplate {
+  padding: 10px 0 0 0; }

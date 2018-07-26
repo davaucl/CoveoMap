@@ -116,7 +116,6 @@ export class CoveoMap extends Component {
                             content: element,
                             maxWidth: 600
                         });
-                        this.focusOnMarker(marker);
                         infoWindow.open(this.googleMap, marker);
                         this.infoWindows.push(infoWindow);
 
