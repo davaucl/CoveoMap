@@ -11,6 +11,8 @@ import {
     ComponentOptions,
     Template,
     TemplateCache,
+    QueryController,
+    AdvancedSearch,
 } from 'coveo-search-ui';
 
 export interface ICoveoMapOptions {
@@ -36,6 +38,7 @@ export class CoveoMap extends Component {
     private resultMarkers: { [key: string]: IResultMarker };
     private markersToCluster = [];
     private infoWindows: google.maps.InfoWindow[] = [];
+    private searchArea: boolean;
 
     constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
@@ -141,7 +144,9 @@ export class CoveoMap extends Component {
             const { result } = resultMarker;
             let { infoWindow, isOpen } = resultMarker;
             if (!infoWindow) {
-                infoWindow = new google.maps.InfoWindow();
+                infoWindow = new google.maps.InfoWindow({
+                    maxWidth: 600
+                });
                 this.infoWindows.push(infoWindow);
             }
             if (!isOpen) {
@@ -176,12 +181,12 @@ export class CoveoMap extends Component {
     }
 
     public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude - 0.015, lng: longitude });
+        this.googleMap.setCenter({ lat: latitude + 0.010, lng: longitude });
     }
 
-    public focusOnMarker(markerid: string) {
+    public focusOnMarker(markerId: string) {
         Object.keys(this.resultMarkers)
-        .filter(key => this.resultMarkers[key]['markerid'] == markerid)
+        .filter(key => this.resultMarkers[key]['markerid'] == markerId)
         .forEach((key) => {
             const { marker } = this.resultMarkers[key];
             // this.setZoomLevel(14);
@@ -189,6 +194,7 @@ export class CoveoMap extends Component {
             this.centerMapOnPoint(lat(), lng());
             google.maps.event.trigger(marker, 'click');
             marker.setAnimation(google.maps.Animation.DROP);
+            const overlay = new google.maps.OverlayView();
         });
         this.element.scrollIntoView();
     }
