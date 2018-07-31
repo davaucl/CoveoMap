@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height">
     <title>Coveo Map</title>
+    <link rel="shortcut icon" href="https://www.coveo.com/public/img/favicon.png">
     <link rel="stylesheet" href="./css/CoveoFullSearch.css" />
     <link rel="stylesheet" href="./css/coveoextension.css" />
     <script class="coveo-script" src="js/CoveoJsSearch.Lazy.js"></script>
@@ -25,95 +26,92 @@
     </script>
 </head>
 
-<body id="search" class='CoveoSearchInterface' data-enable-history="true" data-auto-trigger-query="true" data-results-per-page='50'></body>
-<img class="CoveoLogoOverlay" src="https://www.acumensolutions.com/sites/default/files/logos/coveo%20white.png" />
-<div class='CoveoAnalytics'></div>
-<div class="CoveoMapWraper">
-    <div class="CoveoMap" id="CoveoMap" data-template-id="CoveoMapResultTemplate"></div>
-</div>
-<div class='coveo-search-section-wrapper'>
-    <div class='coveo-search-section'>
-        <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder=""  data-enable-query-syntax="true">
-            <span class="CoveoFieldSuggestions" data-field='@city' data-header-title="City"></span>
-            <span class="CoveoFieldSuggestions" data-field='@department' data-header-title="Type of Commerce"></span>
-        </div>
+
+<body id="search" class='CoveoSearchInterface' data-enable-history="true" data-auto-trigger-query="true" data-results-per-page='100'>
+    <img class="CoveoLogoOverlay" src="https://www.acumensolutions.com/sites/default/files/logos/coveo%20white.png" />
+    <div class='CoveoAnalytics'></div>
+    <div class="CoveoMapWraper">
+        <div class="CoveoMap" id="CoveoMap" data-template-id="CoveoMapResultTemplate"></div>
     </div>
-</div>
-<div class="coveo-main-section">
-    <div class="coveo-facet-column">
-        <div class="CoveoFacetSlider" data-title="Price" data-field="@price" data-graph-steps="5" data-range-slider="true"></div>
-        <div class="CoveoFacetRange Ratings" data-title="Ratings" data-field="@ratings" data-custom-sort="★★★★★,★★★★,★★★,★★,★,-" data-ranges='[{"start": 0, "end": 1, "label": "-", "endInclusive": false}, {"start": 1, "end": 2, "label": "★", "endInclusive": false}, {"start": 1, "end": 2, "label": "★★", "endInclusive": false}, {"start": 2, "end": 3, "label": "★★★", "endInclusive": false}, {"start": 3, "end": 4, "label": "★★★★", "endInclusive": false}, {"start": 4, "end": 5, "label": "★★★★★", "endInclusive": false}]'></div>
-        <div class="CoveoFacet" data-title="Departement" data-field="@department" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
-        <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
-    </div>
-    <div class="coveo-results-column">
-        <div class="CoveoBreadcrumb"></div>
-        <div class="coveo-results-header">
-            <div class="coveo-summary-section">
-                <span class="CoveoQuerySummary"></span>
-                <span class="CoveoQueryDuration"></span>
-            </div>
-            <div class="coveo-sort-section">
-                <span class="CoveoSort" data-sort-criteria="relevancy" data-caption="Relevance"></span>
+    <div class='coveo-search-section-wrapper'>
+        <div class='coveo-search-section'>
+            <div class="CoveoSearchbox" data-enable-omnibox="true" data-placeholder="" data-enable-query-syntax="true">
+                <span class="CoveoFieldSuggestions" data-field='@city' data-header-title="City"></span>
+                <span class="CoveoFieldSuggestions" data-field='@department' data-header-title="Commerce Type"></span>
             </div>
         </div>
-        <div class="CoveoResultList" data-layout="card">
-            <script id="CoveoMapResultTemplate" class="result-template" type="text/underscore" data-layout="card">
-                {{
-                    if (raw.distance) {
-                        formatedDistance = raw.distance.toFixed(2);
-                    }
-                }}
-                <div="CoveoResultLink">
-                    <div class="coveo-result-frame CoveoMapResultTemplate" onClick="CoveoMap.CoveoMap.focusOnMarker('<%- raw.markerid %>')">
-                        <div class="coveo-result-row">
-                            <div class="coveo-result-cell" style="padding-left:15px;">
+    </div>
+    <div class="coveo-main-section">
+        <div class="coveo-facet-column">
+            <div class="CoveoFacetRange Ratings" data-title="Ratings" data-field="@ratings" data-custom-sort="★★★★★,★★★★,★★★,★★,★,-"
+                data-ranges='[{"start": 0, "end": 1, "label": "-", "endInclusive": false}, {"start": 1, "end": 2, "label": "★", "endInclusive": false}, {"start": 1, "end": 2, "label": "★★", "endInclusive": false}, {"start": 2, "end": 3, "label": "★★★", "endInclusive": false}, {"start": 3, "end": 4, "label": "★★★★", "endInclusive": false}, {"start": 4, "end": 5, "label": "★★★★★", "endInclusive": false}]'></div>
+            <div class="CoveoFacet" data-title="Departement" data-field="@department" data-tab="All"></div>
+            <div class="CoveoFacet" data-title="State" data-field="@state" data-tab="All"></div>
+            <div class="CoveoFacet" data-title="City" data-field="@city" data-tab="All"></div>
+        </div>
+        <div class="coveo-results-column">
+            <div class="CoveoBreadcrumb"></div>
+            <div class="coveo-results-header">
+                <div class="coveo-summary-section">
+                    <span class="CoveoQuerySummary"></span>
+                    <span class="CoveoQueryDuration"></span>
+                </div>
+                <div class="CoveoHiddenQuery"></div>
+                <div class="CoveoDidYouMean"></div>
+                <div class="CoveoErrorReport"></div>
+                <div class="CoveoResultsPerPage"></div>
+            </div>
+            <div class="CoveoResultList" data-layout="card">
+                <script id="CoveoMapResultTemplate" class="result-template" type="text/underscore" data-layout="card">
+                    {{
+                        if (raw.distance) {
+                            formatedDistance = raw.distance.toFixed(2);
+                        }
+                    }}
+                    <div="CoveoResultLink">
+                        <div class="coveo-result-frame CoveoMapResultTemplate" onClick="CoveoMap.CoveoMap.focusOnMarker('<%- raw.markerid %>')">
+                            <div class="coveo-result-row">
+                                <div class="coveo-result-cell" style="padding-left:15px;">
+                                    <div class="coveo-result-row">
+                                        <div class="coveo-result-cell" style="font-size:24px;">
+                                            <span class="CoveoFieldValue" data-field="@businessname"></span>
+                                        </div>
+                                        <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:17px">
+                                            <span class="CoveoFieldValue Departement" data-field="@department"></span><br>
+                                        </div>
+                                    </div>
                                 <div class="coveo-result-row">
-                                    <div class="coveo-result-cell" style="font-size:24px;">
-                                        <span class="CoveoFieldValue" data-field="@businessname"></span>
+                                    <div class="coveo-result-cell" style="font-size:17px;">
+                                        <span class="CoveoText" data-value="in"></span>
+                                        <span class="CoveoFieldValue" data-field="@city"></span><br>
+                                        <span class="CoveoFieldValue" data-field="@state"></span>
                                     </div>
-                                    <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:17px">
-                                        <span class="CoveoFieldValue Departement" data-field="@department"></span><br>
+                                    <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:14px">
+                                            <span>{{- formatedDistance }}</span>
+                                            <span class="CoveoText" data-value="km"></span></br>
+                                            <span class="CoveoText" data-value="Rated "></span>
+                                        <span class="CoveoFieldValue" data-field="@ratings"></span>
+                                    </div>                            
+                                </div>
+                                <div class="coveo-result-row">
+                                    <div class="coveo-result-cell" style="font-size:17px; font-weight:700">
+                                        <!-- <span class="CoveoFieldValue" data-field="@price" data-helper="currency"></span> -->
                                     </div>
                                 </div>
-                            <div class="coveo-result-row">
-                                <div class="coveo-result-cell" style="font-size:17px;">
-                                    <span class="CoveoText" data-value="in"></span>
-                                    <span class="CoveoFieldValue" data-field="@city"></span><br>
-                                    <span class="CoveoFieldValue" data-field="@state"></span>
-                                </div>
-                                <div class="coveo-result-cell" style="width:120px; text-align:right; font-size:14px">
-                                        <span>{{- formatedDistance }}</span>
-                                        <span class="CoveoText" data-value="km"></span></br>
-                                        <span class="CoveoText" data-value="Rated "></span>
-                                    <span class="CoveoFieldValue" data-field="@ratings"></span>
-                                </div>                            
-                            </div>
-                            <div class="coveo-result-row">
-                                <div class="coveo-result-cell" style="font-size:17px; font-weight:700">
-                                    <span class="CoveoFieldValue" data-field="@price" data-helper="currency"></span>
-                                </div>
-                            </div>
-                            <div class="coveo-result-row">
-                                <div class="coveo-result-cell">
-                                    <span class="CoveoFieldValue" data-field="@phone"></span><br>
-                                    <span class="CoveoFieldValue" data-field="@email"></span>
+                                <div class="coveo-result-row">
+                                    <div class="coveo-result-cell">
+                                        <span class="CoveoFieldValue" data-field="@phone"></span><br>
+                                        <span class="CoveoFieldValue" data-field="@email"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </script>
+                </script>
+            </div>
+            <div class="CoveoPager"></div>
         </div>
-        <div class="CoveoPager"></div>
     </div>
-</div>
-<div class="CoveoHiddenQuery"></div>
-<div class="CoveoDidYouMean"></div>
-<div class="CoveoErrorReport"></div>
-</div>
-</div>
 </body>
 
 </html>
