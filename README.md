@@ -5,7 +5,9 @@ Read our [Blog](https://github.com/coveo/search-ui-seed) to better understand th
 
 ## Requirements
 Node JS => 8.0
+
 Google Map API key
+
 Coveo Cloud Organization (with data containing lat/long fields)
 
 ## Setup
