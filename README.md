@@ -17,6 +17,9 @@ Coveo Cloud Organization (with data containing lat/long fields)
 3. `npm run watch` at the top of the repository.
 4. Open your browser and and paste in the url  
 
+## Get Our Data
+If you wish to easily get data to try our map yourself you can just clone our [Python Pusher] and execute it to index data into your Push source of your Coveo Cloud organization 
+
 ## Structure
 
 The code is written in [typescript](http://www.typescriptlang.org/) and compiled using [webpack](https://webpack.github.io/)
