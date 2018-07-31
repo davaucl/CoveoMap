@@ -53,7 +53,7 @@ export class CoveoMap extends Component {
     private resultMarkers: { [key: string]: IResultMarker };
 
     /**
-     * The CoveoMap object stores the Google Map object, so all the map functionalities are accessible.
+     * The constructor binds the CoveoMap behaviour to the Coveo Query
      */
     constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
@@ -64,15 +64,9 @@ export class CoveoMap extends Component {
         this.bind.onRootElement(InitializationEvents.afterInitialization, () => this.initMap());
     }
 
-    private instantiateTemplate(result: IQueryResult): Promise<HTMLElement> {
-        return this.options.template.instantiateToElement(result).then(element => {
-            Component.bindResultToElement(element, result);
-            return Initialization.automaticallyCreateComponentsInsideResult(element, result).initResult.then(() => {
-                return element;
-            });
-        });
-    }
-
+    /**
+     * The map initialization is done after Coveo Components initialization.
+     */
     private initMap() {
         this.googleMap = new google.maps.Map(this.element, {
             center: { lat: -33.839, lng: 151.211 },
@@ -81,32 +75,47 @@ export class CoveoMap extends Component {
         this.getPersistentMarkers();
     }
 
+    /**
+     * Relevance options are injected in the query.
+     */
     private onBuildingQuery(args: IBuildingQueryEventArgs) {
         const queryBuilder = args.queryBuilder;
         const currentLatitude = this.googleMap.getCenter()['lat']();
         const currentLongitude = this.googleMap.getCenter()['lng']();
         // get distance for each result relative to the user point of view
         queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
-        // adjust item score based on distance
-        // queryBuilder.advancedExpression.add('$qrf(expression:\'300 - @distance^0.72\')');
+        // adjust item score based on their distance
         queryBuilder.advancedExpression.add('$qrf(expression:\'(400-@distance^0.72)\')');
-        // adjust item score based on ranking
+        // adjust item score based on their rankings
         queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings*5\')');
     }
+
+    /**
+     * Modify the markers when a query comes back from Coveo
+     */
     private onQuerySuccess(args: IQuerySuccessEventArgs) {
         this.closeAllInfoWindows();
         this.clearRelevantMarker();
-        this.plotItem(args.results);
+        this.plotItems(args.results);
     }
 
+    /**
+     * This function request 1000 results from Coveo Cloud using the persistent pipeline.
+     */
     private getPersistentMarkers() {
         Coveo.SearchEndpoint.endpoints.default.search({ q: '', numberOfResults: 1000, pipeline: 'persistent' }).then((results) => {
-            results.results.forEach(result => result.searchInterface = this.searchInterface);
-            this.plotItem(results);
+            results.results.forEach(result => {
+                result.searchInterface = this.searchInterface;
+                result.index = 101;
+            });
+            this.plotItems(results);
         });
     }
 
-    private plotItem(args: IQueryResults) {
+    /**
+     *  For each results, get the marker from CoveoMap.
+     */
+    private plotItems(args: IQueryResults) {
         for (const result of args.results) {
             const resultMarker = this.getResultMarker(result);
             resultMarker.result = result;
@@ -177,6 +186,15 @@ export class CoveoMap extends Component {
         });
     }
 
+    private instantiateTemplate(result: IQueryResult): Promise<HTMLElement> {
+        return this.options.template.instantiateToElement(result).then(element => {
+            Component.bindResultToElement(element, result);
+            return Initialization.automaticallyCreateComponentsInsideResult(element, result).initResult.then(() => {
+                return element;
+            });
+        });
+    }
+
     private closeAllInfoWindows() {
         Object.keys(this.resultMarkers)
             .map(key => this.resultMarkers[key])
@@ -203,11 +221,7 @@ export class CoveoMap extends Component {
             relevant = 'false';
         }
         const metadata = { relevantMarker: relevant, department: resultMarker.result.raw.department, businessname: resultMarker.result.raw.businessname, city: resultMarker.result.raw.city, state: resultMarker.result.raw.state, price: resultMarker.result.raw.price };
-        Coveo.logClickEvent(document.body, customEventCause, metadata, resultMarker.result);
-    }
-
-    private setZoomLevel(zoomLevel) {
-        this.googleMap.setZoom(zoomLevel);
+        this.usageAnalytics.logClickEvent(customEventCause, metadata, resultMarker.result, this.element);
     }
 
     public centerMapOnPoint(latitude, longitude) {
@@ -220,12 +234,10 @@ export class CoveoMap extends Component {
             .filter(key => this.resultMarkers[key].id == markerId)
             .forEach((key) => {
                 const { marker } = this.resultMarkers[key];
-                // this.setZoomLevel(14);
                 const { lat, lng } = marker.getPosition().toJSON();
                 this.centerMapOnPoint(lat, lng);
                 google.maps.event.trigger(marker, 'click');
                 marker.setAnimation(google.maps.Animation.DROP);
-                this.sendClickEvent(this.resultMarkers[key]);
             });
         this.element.scrollIntoView();
     }
