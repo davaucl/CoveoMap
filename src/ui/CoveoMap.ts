@@ -10,11 +10,7 @@ import {
     IQueryResults,
     ComponentOptions,
     Template,
-    TemplateCache,
-    QueryController,
-    AdvancedSearch,
-    HtmlTemplate,
-    result,
+    TemplateCache
 } from 'coveo-search-ui';
 
 export interface ICoveoMapOptions {
@@ -58,7 +54,6 @@ export class CoveoMap extends Component {
 
     /**
      * The CoveoMap object stores the Google Map object, so all the map functionalities are accessible.
-     * All the results are also store in-memory using the Interface defined at the beggining of this file.
      */
     constructor(public element: HTMLElement, public options: ICoveoMapOptions, public bindings: IComponentBindings) {
         super(element, CoveoMap.ID, bindings);
@@ -94,9 +89,9 @@ export class CoveoMap extends Component {
         queryBuilder.advancedExpression.add('$qf(function:\'dist(@latitude, @longitude,' + currentLatitude + ',' + currentLongitude + ')/1000\', fieldName: \'distance\')');
         // adjust item score based on distance
         // queryBuilder.advancedExpression.add('$qrf(expression:\'300 - @distance^0.72\')');
-        queryBuilder.advancedExpression.add('$qrf(expression:\'(300-@distance^0.72)\')');
+        queryBuilder.advancedExpression.add('$qrf(expression:\'(400-@distance^0.72)\')');
         // adjust item score based on ranking
-        queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings^2.5\')');
+        queryBuilder.advancedExpression.add('$qrf(expression:\'@ratings*5\')');
     }
     private onQuerySuccess(args: IQuerySuccessEventArgs) {
         this.closeAllInfoWindows();
