@@ -113,15 +113,17 @@ export class CoveoMap extends Component {
     }
 
     /**
-     *  For each results, get the marker from CoveoMap.
+     *  For each results, change the marker status (relevant vs background marker)
+     *  this will also create the marker or fetch an already created marker
      */
     private plotItems(args: IQueryResults) {
         for (const result of args.results) {
             const resultMarker = this.getResultMarker(result);
             resultMarker.result = result;
-            resultMarker.marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
-            resultMarker.marker.setOpacity(1);
+            resultMarker.marker.setOpacity(0.1);
             if (args.pipeline != 'persistent' && args.totalCount > 0) {
+                resultMarker.marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
+                resultMarker.marker.setOpacity(1);
                 if (result.index == 0) {
                     this.focusOnMarker(resultMarker.result.raw.markerid);
                 }
@@ -129,6 +131,10 @@ export class CoveoMap extends Component {
         }
     }
 
+    /**
+     *  This holds all the markers, and creates a new one of the requested marker
+     *  doesn't exist.
+     */
     private getResultMarker(result: IQueryResult): IResultMarker {
         const key = result.raw.sysrowid;
         if (!this.resultMarkers[key]) {
@@ -137,6 +143,9 @@ export class CoveoMap extends Component {
         return this.resultMarkers[key];
     }
 
+    /**
+     *  Create a result marker, and the related InfoWindow
+     */
     private createResultMarker(result: IQueryResult): IResultMarker {
         const marker = this.createMarker(result);
 
@@ -147,6 +156,9 @@ export class CoveoMap extends Component {
         return resultMarker;
     }
 
+    /**
+     *  Create a Google Map marker
+     */
     private createMarker(result: IQueryResult): google.maps.Marker {
         const marker = new google.maps.Marker({
             position: {
@@ -160,6 +172,9 @@ export class CoveoMap extends Component {
         return marker;
     }
 
+    /**
+     *  Manage the InfoWindow attached with a Marker in the ResultMarker item.
+     */
     private attachInfoWindowOnClick(resultMarker: IResultMarker) {
         const { marker } = resultMarker;
         marker.addListener('click', () => {
@@ -186,6 +201,9 @@ export class CoveoMap extends Component {
         });
     }
 
+    /**
+     *  Instantiate the Coveo Result Template in the InfoWindow.
+     */
     private instantiateTemplate(result: IQueryResult): Promise<HTMLElement> {
         return this.options.template.instantiateToElement(result).then(element => {
             Component.bindResultToElement(element, result);
@@ -195,6 +213,9 @@ export class CoveoMap extends Component {
         });
     }
 
+    /**
+     *  Closes the opened InfoWindows
+     */
     private closeAllInfoWindows() {
         Object.keys(this.resultMarkers)
             .map(key => this.resultMarkers[key])
@@ -205,6 +226,9 @@ export class CoveoMap extends Component {
             });
     }
 
+    /**
+     *  Toggle a relevant marker to a background marker
+     */
     private clearRelevantMarker() {
         Object.keys(this.resultMarkers).forEach((key) => {
             const { marker } = this.resultMarkers[key];
@@ -214,6 +238,9 @@ export class CoveoMap extends Component {
         });
     }
 
+    /**
+     *  Send a click event to Coveo using custom MetaData
+     */
     private sendClickEvent(resultMarker: IResultMarker) {
         const customEventCause = { name: 'Click', type: 'document' };
         let relevant = 'true';
@@ -224,11 +251,25 @@ export class CoveoMap extends Component {
         this.usageAnalytics.logClickEvent(customEventCause, metadata, resultMarker.result, this.element);
     }
 
-    public centerMapOnPoint(latitude, longitude) {
-        this.googleMap.setCenter({ lat: latitude, lng: longitude });
+    /**
+     *  Centers map on point and offset it to let InfoWindow visible
+     */
+    private centerMapOnPoint(lat, lng) {
+        const scale = Math.pow(2, this.googleMap.getZoom());
+        const latLng = new google.maps.LatLng(lat, lng);
+        const mapCenter = this.googleMap.getProjection().fromLatLngToPoint(latLng);
+        const pixelOffset = new google.maps.Point((0 / scale) || 0, (-200 / scale) || 0);
+        const worldCoordinateNewCenter = new google.maps.Point(
+            mapCenter.x - pixelOffset.x,
+            mapCenter.y + pixelOffset.y
+        );
+        const newCenter = this.googleMap.getProjection().fromPointToLatLng(worldCoordinateNewCenter);
+        this.googleMap.setCenter(newCenter);
     }
 
-
+    /**
+     *  Open a Infowindow and adjust the Map
+     */
     public focusOnMarker(markerId: string) {
         Object.keys(this.resultMarkers)
             .filter(key => this.resultMarkers[key].id == markerId)
