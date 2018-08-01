@@ -125,7 +125,7 @@ export class CoveoMap extends Component {
             if (args.pipeline != 'persistent' && args.totalCount > 0) {
                 resultMarker.marker = this.setMarkersAsRelevant(resultMarker.marker);
                 if (result.index == 0) {
-                    this.focusOnMarker(resultMarker.result.raw.markerid);
+                    this.centerMapOnPoint(resultMarker.result.raw.latitude, resultMarker.result.raw.longitude);
                 }
             }
         }
@@ -300,8 +300,9 @@ export class CoveoMap extends Component {
                 google.maps.event.trigger(marker, 'click');
                 marker.setAnimation(google.maps.Animation.DROP);
             });
-        this.element.scrollIntoView();
+        window.scroll({ top: 0, left: 0, behavior: 'smooth' });
     }
+
 }
 
 Initialization.registerAutoCreateComponent(CoveoMap);
