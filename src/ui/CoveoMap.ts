@@ -34,6 +34,7 @@ interface IResultMarker {
  */
 export class CoveoMap extends Component {
     static ID = 'Map';
+
     /**
      * This section will fetch the data-template-id value of the CoveoMap component
      * and will load any Underscore template script available in the SearchInterface node
@@ -120,15 +121,34 @@ export class CoveoMap extends Component {
         for (const result of args.results) {
             const resultMarker = this.getResultMarker(result);
             resultMarker.result = result;
-            resultMarker.marker.setOpacity(0.1);
+            resultMarker.marker = this.setMarkersAsBackground(resultMarker.marker);
             if (args.pipeline != 'persistent' && args.totalCount > 0) {
-                resultMarker.marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
-                resultMarker.marker.setOpacity(1);
+                resultMarker.marker = this.setMarkersAsRelevant(resultMarker.marker);
                 if (result.index == 0) {
                     this.focusOnMarker(resultMarker.result.raw.markerid);
                 }
             }
         }
+    }
+
+    /**
+     *  Modify the marker to make it look blue with full opacity.
+     */
+    private setMarkersAsRelevant(marker: google.maps.Marker) {
+        marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
+        marker.setOpacity(1);
+        marker.setZIndex(100);
+        return marker;
+    }
+
+    /**
+     *  Modify the marker to make it red with low opacity.
+     */
+    private setMarkersAsBackground(marker: google.maps.Marker) {
+        marker.setIcon(null);
+        marker.setOpacity(0.2);
+        marker.setZIndex(50);
+        return marker;
     }
 
     /**
