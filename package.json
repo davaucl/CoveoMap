@@ -10,7 +10,8 @@
     "minimize": "webpack --minimize",
     "css": "node css.js",
     "watch": "npm run setup && npm run css && webpack-serve --config webpack-serve.config --progress --colors",
-    "watchTest": "karma start"
+    "watchTest": "karma start",
+    "start": "node server.js"
   },
   "keywords": [
     "coveo",
