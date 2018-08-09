@@ -16,8 +16,9 @@ Coveo Cloud Organization (with data containing lat/long fields)
 
 1. Fork / clone the repository.
 2. `npm install` at the top of the repository.
-3. `npm run watch` at the top of the repository.
-4. Open your browser and and paste in the url  
+3. Configuration of Coveo Cloud and Google API key
+4. `npm run watch` at the top of the repository.
+5. Open your browser and and paste in the url  
 
 ## Get Our Data
 If you wish to use our data to try to experiment with the map, you can clone our [Python Pusher](https://github.com/coveo/samples/tree/master/push-api/python-pusher) configure the script with your Push source key and execute it to index the data into your Coveo Cloud organization. You can find all the individual JSON file in the ressource folder of this project.
