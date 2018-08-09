@@ -3,6 +3,8 @@ This is a branch of the [Coveo Search-ui-seed](https://github.com/coveo/search-u
 
 Read our [Blog](https://github.com/coveo/search-ui-seed) to better understand the full scope of the project.
 
+Visit the [live map](https://coveo-map.herokuapp.com/) to have fun with it. (Initial load of the map might take a few seconds)
+
 ## Requirements
 Node JS => 8.0
 
@@ -18,7 +20,7 @@ Coveo Cloud Organization (with data containing lat/long fields)
 4. Open your browser and and paste in the url  
 
 ## Get Our Data
-If you wish to easily get data to try our map yourself you can just clone our [Python Pusher] and execute it to index data into your Push source of your Coveo Cloud organization 
+If you wish to use our data to try to experiment with the map, you can clone our [Python Pusher](https://github.com/coveo/samples/tree/master/push-api/python-pusher) configure the script with your Push source key and execute it to index the data into your Coveo Cloud organization. You can find all the individual JSON file in the ressource folder of this project.
 
 ## Structure
 
