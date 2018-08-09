@@ -35,9 +35,8 @@ export class CoveoMap extends Component {
     static ID = 'Map';
 
     /**
-     * This section will fetch the data-template-id value of the CoveoMap component
-     * and will load any Underscore template script available in the SearchInterface node
-     * having the matching DOM ID.
+     * This section will fetch the data-template-id value of the CoveoMap component and
+     * will load any Underscore template script available in the SearchInterface node matching with the DOM ID.
      */
     static options: ICoveoMapOptions = {
         template: ComponentOptions.buildTemplateOption({
@@ -116,6 +115,10 @@ export class CoveoMap extends Component {
         }
     }
 
+    /**
+     * Here we use two different types of marker, the red one (Background Markers) are the less relevant markers used with a smaller opacity
+     * As for the relevant items we use blue markers with a full opacity, this way it is easy to differenciate the type of results.
+     */
     private setMarkerAsRelevant(marker: google.maps.Marker) {
         marker.setIcon('http://www.osteokinesis.it/img/icons/map-marker.png');
         marker.setOpacity(1);
@@ -131,6 +134,7 @@ export class CoveoMap extends Component {
     private getResultMarker(result: IQueryResult): IResultMarker {
         const key = result.raw.sysrowid;
         if (!this.resultMarkers[key]) {
+            // If the query returns an item that didn't already have a marker it will create it.
             this.resultMarkers[key] = this.createResultMarker(result);
         }
         return this.resultMarkers[key];
@@ -138,7 +142,7 @@ export class CoveoMap extends Component {
 
     private createResultMarker(result: IQueryResult): IResultMarker {
         const marker = this.createMarker(result);
-
+        // This creates the marker with all the information to fill the result template that open in the map, in Google map this is called InfoWindow.
         const resultMarker: IResultMarker = {
             marker, result, isOpen: false, id: result.raw.markerid
         };
@@ -170,6 +174,7 @@ export class CoveoMap extends Component {
                 });
                 resultMarker.infoWindow = infoWindow;
             }
+            // To remove confusion we decided to close the previous opened window when clicking on a different result.
             if (!isOpen) {
                 this.instantiateTemplate(result).then(element => {
                     this.closeAllInfoWindows();
@@ -210,6 +215,11 @@ export class CoveoMap extends Component {
         });
     }
 
+    /**
+     * This is a custom analytic call that was created to keep track of click events that happen on the map.
+     * Analytics allows you to train your machine learning model,
+     * they are easy to implement on a result list but we also wanted to keep track of what as clicked on them map
+     */
     private sendClickEvent(resultMarker: IResultMarker) {
         const customEventCause = { name: 'Click', type: 'document' };
         const { marker, result } = resultMarker;
